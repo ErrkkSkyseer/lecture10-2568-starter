@@ -5,9 +5,28 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [tasks, setTasks] = useState<TaskCardProps[]>([]);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   //useEffect runs at first and after tasks is updated
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // console.log("YOLOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    if (isFirstLoad) {
+      setIsFirstLoad(false);
+      return;
+    }
+    const tasksJSON = JSON.stringify(tasks);
+    localStorage.setItem("tasks", tasksJSON);
+  }, [tasks]);
+
+  useEffect(() => {
+    const tasksStr = localStorage.getItem("tasks");
+    if (tasksStr === null) {
+      return;
+    }
+
+    const taskJSON = JSON.parse(tasksStr);
+    setTasks(taskJSON);
+  }, []);
 
   const handleAdd = (newTask: TaskCardProps) => {
     //make a new array based on old "tasks" and add newTask as last one
